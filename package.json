@@ -2,18 +2,18 @@
   "name": "kekstagram",
   "version": "23.0.0",
   "private": true,
-  "description": "Личный проект «{{projectTitle}}» от HTML Academy",
+  "description": "Личный проект «Кекстаграм» от HTML Academy",
   "repository": {
     "type": "git",
     "url": "{{sshUrl}}"
   },
   "bugs": {
-    "url": "{{bugsUrl}}"
+    "url": "https://github.com/Dimahtml/kekstagram-23/issues"
   },
   "devDependencies": {
     "browser-sync": "2.26.14",
     "eslint": "7.18.0",
-    "eslint-config-htmlacademy": "4.0.0"
+    "eslint-config-htmlacademy": "^4.0.0"
   },
   "license": "MIT",
   "dependencies": {},
