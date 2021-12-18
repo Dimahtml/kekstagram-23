@@ -1,6 +1,5 @@
 // Функция взята из интернета и доработана
 // Источник - https://github.com/you-dont-need/You-Dont-Need-Lodash-Underscore#_random
-
 function getRandomPositiveInteger (num1, num2) {
   // Чтобы не заставлять пользователя нашей функции помнить порядок аргументов,
   // реализуем поддержку передачи минимального и максимального значения в любом порядке,
@@ -27,4 +26,17 @@ function getRandomPositiveInteger (num1, num2) {
   return Math.floor(result);
 }
 
-getRandomPositiveInteger();
+function checkStringLength (string, length) {
+  return string.length <= length;
+}
+
+function getRandomItem (items) {
+  const index = getRandomPositiveInteger(0, items.length - 1);
+  return items[index];
+}
+
+export {
+  getRandomPositiveInteger,
+  checkStringLength,
+  getRandomItem
+};
