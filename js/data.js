@@ -55,16 +55,14 @@ const getPictureUrl = (pictureNumbers) => {
   return `photos/${pictureNumber}.jpg`;
 };
 
-const createComment = function() {
-  return {
-    id: getCommentId(),
-    avatar: getRandomItem(AVATARS),
-    message: getRandomItem(MESSAGES),
-    name: getRandomItem(NAMES),
-  };
-};
+const createComment = () => ({
+  id: getCommentId(),
+  avatar: getRandomItem(AVATARS),
+  message: getRandomItem(MESSAGES),
+  name: getRandomItem(NAMES),
+});
 
-const createSimilarComments = function () {
+const createSimilarComments = () => {
   const commentsCount = getRandomPositiveInteger(COMMENTS_MIN_COUNT, COMMENTS_MAX_COUNT);
   const similarComments = new Array(commentsCount).fill(null).map(() => createComment());
   return similarComments;
@@ -72,14 +70,12 @@ const createSimilarComments = function () {
 
 const picturesUrlIndexes = new Array(URL_INDEXES_COUNT).fill(null).map((item, index) => index + 1);
 
-const createPicture = function () {
-  return {
-    id: getPictureId(),
-    url: getPictureUrl(picturesUrlIndexes),
-    description: DESCRIPTION,
-    likes: getRandomPositiveInteger(LIKES_MIN_COUNT, LIKES_MAX_COUNT),
-    comments: createSimilarComments(),
-  };
-};
+const createPicture = () => ({
+  id: getPictureId(),
+  url: getPictureUrl(picturesUrlIndexes),
+  description: DESCRIPTION,
+  likes: getRandomPositiveInteger(LIKES_MIN_COUNT, LIKES_MAX_COUNT),
+  comments: createSimilarComments(),
+});
 
 export { createPicture };
