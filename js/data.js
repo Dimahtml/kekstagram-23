@@ -6,6 +6,7 @@ const LIKES_MAX_COUNT = 200;
 const COMMENTS_MIN_COUNT = 1;
 const COMMENTS_MAX_COUNT = 4;
 const URL_INDEXES_COUNT = 25;
+const SIMILAR_PICTURE_COUNT = 25;
 
 const NAMES = [
   'Максим',
@@ -78,4 +79,6 @@ const createPicture = () => ({
   comments: createSimilarComments(),
 });
 
-export { createPicture };
+const createPictures = () => new Array(SIMILAR_PICTURE_COUNT).fill(null).map(() => createPicture());
+
+export { createPictures };
