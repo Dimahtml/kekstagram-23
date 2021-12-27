@@ -1,36 +1,9 @@
-const IMAGE_WIDTH = 35;
-const IMAGE_HEIGHT = 35;
+import { isEscEvent  } from './utils.js';
+import { createSimilarComments, clearCommentsContainer } from './comments.js';
 
 const bigPicture = document.querySelector('.big-picture');
 const bigPictureImg = bigPicture.querySelector('.big-picture__img').querySelector('img');
 const cancelButton = bigPicture.querySelector('.big-picture__cancel');
-const commentsContainer = document.querySelector('.social__comments');
-
-const createComment = (comment) => {
-  const listItem = document.createElement('li');
-  const image = document.createElement('img');
-  const paragraph = document.createElement('p');
-
-  listItem.classList.add('social__comment');
-  image.classList.add('social__picture');
-  image.src = comment.avatar;
-  image.alt = comment.name;
-  image.width = IMAGE_WIDTH;
-  image.height = IMAGE_HEIGHT;
-  paragraph.classList.add('social__text');
-  paragraph.textContent = comment.message;
-
-  listItem.appendChild(image);
-  listItem.appendChild(paragraph);
-  commentsContainer.appendChild(listItem);
-};
-
-const createSimilarComments = (comments) => {
-  while (commentsContainer.firstChild) {
-    commentsContainer.removeChild(commentsContainer.firstChild);
-  }
-  comments.forEach((comment) => createComment(comment));
-};
 
 const showBigPicture = (url, likesCount, comments, description) => {
   bigPictureImg.src = url;
@@ -39,9 +12,10 @@ const showBigPicture = (url, likesCount, comments, description) => {
   bigPicture.querySelector('.comments-count').textContent = comments.lenght;
   document.body.classList.add('modal-open');
   // eslint-disable-next-line no-use-before-define
-  document.addEventListener('keydown', escButtonHandler);
+  document.addEventListener('keydown', escButtonKeydownHandler);
   // eslint-disable-next-line no-use-before-define
-  cancelButton.addEventListener('click', cancelButtonHandler);
+  cancelButton.addEventListener('click', cancelButtonClickHandler);
+  clearCommentsContainer();
   createSimilarComments(comments);
 
   // прячем пару пунктов, с ними разберемся позже
@@ -53,22 +27,25 @@ const hideBigPicture = () => {
   bigPicture.classList.add('hidden');
   document.body.classList.remove('modal-open');
   // eslint-disable-next-line no-use-before-define
-  document.removeEventListener('keydown', escButtonHandler);
+  document.removeEventListener('keydown', escButtonKeydownHandler);
   // eslint-disable-next-line no-use-before-define
-  cancelButton.removeEventListener('click', cancelButtonHandler);
+  cancelButton.removeEventListener('click', cancelButtonClickHandler);
 };
 
-const pictureClickHandler = (url, likesCount, comments, description) => {
+const pictureClickHandler = (evt, url, likesCount, comments, description) => {
+  evt.preventDefault();
   showBigPicture(url, likesCount, comments, description);
   bigPicture.classList.remove('hidden');
 };
 
-const escButtonHandler = (evt) => {
-  if (evt.key === 'Escape') {
+const escButtonKeydownHandler = (evt) => {
+  if (isEscEvent(evt)) {
+    evt.preventDefault();
+    evt.target.blur();
     hideBigPicture();
   }
 };
 
-const cancelButtonHandler = () => hideBigPicture();
+const cancelButtonClickHandler = () => hideBigPicture();
 
 export { pictureClickHandler };

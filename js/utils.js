@@ -33,8 +33,11 @@ const getRandomItem = (items) => {
   return items[index];
 };
 
+const isEscEvent = (evt) => evt.key === 'Escape' || evt.key === 'Esc';
+
 export {
   getRandomPositiveInteger,
   checkStringLength,
-  getRandomItem
+  getRandomItem,
+  isEscEvent
 };
