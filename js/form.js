@@ -1,5 +1,6 @@
 /* eslint-disable no-use-before-define */
 import { isEscEvent  } from './utils.js';
+import { getReportHashtagsText } from './validation.js';
 
 const DEFAULT_SCALE = '55%';
 
@@ -8,6 +9,7 @@ const pictureUploadOverlay = uploadForm.querySelector('.img-upload__overlay');
 const uploadFileInput = uploadForm.querySelector('#upload-file');
 const picturePreview = uploadForm.querySelector('.img-upload__preview').querySelector('img');
 const cancelButton = uploadForm.querySelector('.img-upload__cancel');
+const textHashtagsInput = uploadForm.querySelector('.text__hashtags');
 
 const showUploadForm = () => {
   pictureUploadOverlay.classList.remove('hidden');
@@ -39,7 +41,7 @@ const cancelButtonClickHandler = (evt) => {
 };
 
 const escButtonKeydownHandler = (evt) => {
-  if (isEscEvent(evt)) {
+  if (isEscEvent(evt) && evt.target !== textHashtagsInput) {
     evt.preventDefault();
     hideUploadForm();
     resetUploadForm();
@@ -51,3 +53,11 @@ const downloadButtonClickHandler = () => {
 };
 
 uploadFileInput.addEventListener('change', downloadButtonClickHandler);
+
+textHashtagsInput.addEventListener('input', () => {
+  const value = textHashtagsInput.value;
+  const report = getReportHashtagsText(value);
+
+  textHashtagsInput.setCustomValidity(`${report}`);
+  textHashtagsInput.reportValidity();
+});
