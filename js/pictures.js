@@ -15,7 +15,7 @@ similarPictures.forEach(({url, likes, comments, description}) => {
   pictureElement.querySelector('.picture__comments').textContent = comments.length;
   similarPicturesFragment.appendChild(pictureElement);
 
-  pictureElement.addEventListener('click', () => pictureClickHandler(url, likes, comments, description));
+  pictureElement.addEventListener('click', (evt) => pictureClickHandler(evt, url, likes, comments, description));
 });
 
 similarPicturesContainer.appendChild(similarPicturesFragment);
