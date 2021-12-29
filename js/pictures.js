@@ -1,12 +1,19 @@
-import { pictureClickHandler } from './big-picture.js';
+import { showBigPicture } from './big-picture.js';
 import { createPictures } from './data.js';
 
 const pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
 const similarPicturesContainer = document.querySelector('.pictures');
+const bigPicture = document.querySelector('.big-picture');
 
 const similarPictures = createPictures();
 
 const similarPicturesFragment = document.createDocumentFragment();
+
+const pictureClickHandler = (evt, url, likesCount, comments, description) => {
+  evt.preventDefault();
+  showBigPicture(url, likesCount, comments, description);
+  bigPicture.classList.remove('hidden');
+};
 
 similarPictures.forEach(({url, likes, comments, description}) => {
   const pictureElement = pictureTemplate.cloneNode(true);
@@ -19,3 +26,5 @@ similarPictures.forEach(({url, likes, comments, description}) => {
 });
 
 similarPicturesContainer.appendChild(similarPicturesFragment);
+
+export { similarPictures };

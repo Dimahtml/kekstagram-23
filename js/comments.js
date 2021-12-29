@@ -3,7 +3,7 @@ const IMAGE_HEIGHT = 35;
 
 const commentsContainer = document.querySelector('.social__comments');
 
-const createComment = (comment) => {
+const renderComment = (comment) => {
   const listItem = document.createElement('li');
   const image = document.createElement('img');
   const paragraph = document.createElement('p');
@@ -22,12 +22,12 @@ const createComment = (comment) => {
   commentsContainer.appendChild(listItem);
 };
 
-const createSimilarComments = (comments) => {
-  comments.forEach((comment) => createComment(comment));
+const renderSimilarComments = (comments) => {
+  comments.forEach((comment) => renderComment(comment));
 };
 
-const clearCommentsContainer = () => {
-  commentsContainer.innerHTML = '';
+const clearContainer = (container) => {
+  container.innerHTML = '';
 };
 
-export { createSimilarComments, clearCommentsContainer };
+export { renderSimilarComments, clearContainer };
