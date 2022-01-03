@@ -2,6 +2,7 @@
 import { isEscEvent  } from './utils.js';
 import { getReportHashtagsText } from './validation.js';
 
+const DEFAULT_EFFECT_VALUE = 100;
 const DEFAULT_SCALE_VALUE = 100;
 const MIN_SCALE_VALUE = 25;
 const MAX_SCALE_VALUE = 100;
@@ -14,18 +15,24 @@ const picturePreview = uploadForm.querySelector('.img-upload__preview').querySel
 const cancelButton = uploadForm.querySelector('.img-upload__cancel');
 const textHashtagsInput = uploadForm.querySelector('.text__hashtags');
 const textCommentInput = uploadForm.querySelector('.text__description');
-const imgUploadScale = uploadForm.querySelector('.img-upload__scale');
-const scaleButtonSmaller = imgUploadScale.querySelector('.scale__control--smaller');
-const scaleButtonBigger = imgUploadScale.querySelector('.scale__control--bigger');
-const scaleInput = imgUploadScale.querySelector('.scale__control--value');
+const scaleButtonSmaller = uploadForm.querySelector('.scale__control--smaller');
+const scaleButtonBigger = uploadForm.querySelector('.scale__control--bigger');
+const scaleInput = uploadForm.querySelector('.scale__control--value');
+const pictureEffectsContainer = uploadForm.querySelector('.effects__list');
+const valueElement = uploadForm.querySelector('.effect-level__value');
+const sliderElement = uploadForm.querySelector('.effect-level__slider');
 
 let currentScaleValue = DEFAULT_SCALE_VALUE;
+let currentEffect = '';
 
 const showUploadForm = () => {
   pictureUploadOverlay.classList.remove('hidden');
+  sliderElement.classList.add('hidden');
   document.body.classList.add('modal-open');
+
   const [file] = uploadFileInput.files;
   picturePreview.src = URL.createObjectURL(file);
+
   cancelButton.addEventListener('click', cancelButtonClickHandler);
   document.addEventListener('keydown', escButtonKeydownHandler);
 };
@@ -47,17 +54,36 @@ const resetUploadForm = () => {
 
 const setScaleValue = (scaleValue) => {
   if (scaleValue < 100) {
-    picturePreview.style = `transform: scale(0.${scaleValue})`;
+    picturePreview.style.transform = `scale(0.${scaleValue})`;
   } else {
-    picturePreview.style = `transform: scale(${scaleValue / 100})`;
+    picturePreview.style.transform = `scale(${scaleValue / 100})`;
   }
   scaleInput.value = `${scaleValue}%`;
+};
+
+const clearPictureEffects = () => {
+  picturePreview.className = '';
+  currentEffect = '';
+
+  sliderElement.noUiSlider.updateOptions({
+    range: {
+      min: 0,
+      max: 100,
+    },
+    start: 100,
+    step: 10,
+    connect: 'lower',
+  });
+
+  document.querySelector('#effect-none').checked = true;
+  picturePreview.style.filter = 'none';
 };
 
 const cancelButtonClickHandler = (evt) => {
   evt.preventDefault(evt);
   hideUploadForm();
   resetUploadForm();
+  clearPictureEffects();
   setScaleValue(DEFAULT_SCALE_VALUE);
 };
 
@@ -66,12 +92,78 @@ const escButtonKeydownHandler = (evt) => {
     evt.preventDefault();
     hideUploadForm();
     resetUploadForm();
+    clearPictureEffects();
     setScaleValue(DEFAULT_SCALE_VALUE);
   }
 };
 
 const downloadButtonClickHandler = () => {
   showUploadForm();
+};
+
+const effectsChangeHandler = (evt) => {
+  if (evt.target && evt.target.matches('input[type="radio"]')) {
+    currentEffect = evt.target.value;
+    valueElement.value = DEFAULT_EFFECT_VALUE;
+    picturePreview.className = '';
+    picturePreview.classList.add(`effects__preview--${evt.target.value}`);
+
+    if (currentEffect === 'none') {
+      sliderElement.noUiSlider.updateOptions({
+        range: {
+          min: 0,
+          max: 100,
+        },
+        start: 100,
+        step: 10,
+        connect: 'lower',
+      });
+    }
+
+    if (currentEffect === 'chrome' || currentEffect === 'sepia') {
+      sliderElement.noUiSlider.updateOptions({
+        range: {
+          min: 0,
+          max: 1,
+        },
+        step: 0.1,
+      });
+      sliderElement.noUiSlider.set(1);
+    }
+
+    if (currentEffect === 'marvin') {
+      sliderElement.noUiSlider.updateOptions({
+        range: {
+          min: 0,
+          max: 100,
+        },
+        step: 1,
+      });
+      sliderElement.noUiSlider.set(100);
+    }
+
+    if (currentEffect === 'phobos') {
+      sliderElement.noUiSlider.updateOptions({
+        range: {
+          min: 0,
+          max: 3,
+        },
+        step: 0.1,
+      });
+      sliderElement.noUiSlider.set(3);
+    }
+
+    if (currentEffect === 'heat') {
+      sliderElement.noUiSlider.updateOptions({
+        range: {
+          min: 1,
+          max: 3,
+        },
+        step: 0.1,
+      });
+      sliderElement.noUiSlider.set(3);
+    }
+  }
 };
 
 uploadFileInput.addEventListener('change', downloadButtonClickHandler);
@@ -98,6 +190,42 @@ scaleButtonBigger.addEventListener('click', (evt) => {
   }
   setScaleValue(currentScaleValue);
   evt.target.blur();
+});
+
+pictureEffectsContainer.addEventListener('change', effectsChangeHandler);
+
+noUiSlider.create(sliderElement, {
+  range: {
+    min: 0,
+    max: 100,
+  },
+  start: 100,
+  step: 10,
+  connect: 'lower',
+});
+
+sliderElement.noUiSlider.on('update', (_values, handle, unencoded) => {
+  valueElement.value = unencoded[handle];
+
+  if (currentEffect === 'none') {
+    picturePreview.style.filter = 'none';
+    sliderElement.classList.add('hidden');
+  } else if (currentEffect === 'chrome') {
+    picturePreview.style.filter = `grayscale(${valueElement.value})`;
+    sliderElement.classList.remove('hidden');
+  } else if (currentEffect === 'sepia') {
+    picturePreview.style.filter = `sepia(${valueElement.value})`;
+    sliderElement.classList.remove('hidden');
+  } else if (currentEffect === 'marvin') {
+    picturePreview.style.filter = `invert(${valueElement.value}%)`;
+    sliderElement.classList.remove('hidden');
+  } else if (currentEffect === 'phobos') {
+    picturePreview.style.filter = `blur(${valueElement.value}px)`;
+    sliderElement.classList.remove('hidden');
+  } else if (currentEffect === 'heat') {
+    picturePreview.style.filter = `brightness(${valueElement.value})`;
+    sliderElement.classList.remove('hidden');
+  }
 });
 
 setScaleValue(DEFAULT_SCALE_VALUE);
