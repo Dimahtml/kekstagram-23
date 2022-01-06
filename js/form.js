@@ -1,5 +1,5 @@
 /* eslint-disable no-use-before-define */
-import { isEscEvent  } from './utils.js';
+import { isEscEvent, showErrorMessage  } from './utils.js';
 import { getReportHashtagsText } from './validation.js';
 
 const DEFAULT_EFFECT_VALUE = 100;
@@ -21,6 +21,7 @@ const scaleInput = uploadForm.querySelector('.scale__control--value');
 const pictureEffectsContainer = uploadForm.querySelector('.effects__list');
 const valueElement = uploadForm.querySelector('.effect-level__value');
 const sliderElement = uploadForm.querySelector('.effect-level__slider');
+let successMessageTemplate = null;
 
 let currentScaleValue = DEFAULT_SCALE_VALUE;
 let currentEffect = '';
@@ -32,12 +33,22 @@ const setUploadFormSubmit = (onSuccess) => {
     const formData = new FormData(evt.target);
 
     fetch(
-      'https://23.javascript.pages.academy/kekstagram',
+      'https://23.javascript.pages.academy/kekstagram123',
       {
         method: 'POST',
         body: formData,
       },
-    ).then(() => onSuccess());
+    )
+      .then((response) => {
+        if (response.ok) {
+          onSuccess();
+        } else {
+          showErrorMessage('Не удалось отправить форму. Попробуйте еще раз');
+        }
+      })
+      .catch(() => {
+        showErrorMessage('Не удалось отправить форму. Попробуйте еще раз');
+      });
   });
 };
 
@@ -66,6 +77,28 @@ const resetUploadForm = () => {
   textHashtagsInput.value = '';
   textCommentInput.value = '';
   currentScaleValue = DEFAULT_SCALE_VALUE;
+};
+
+const showSuccessMessage = () => {
+  successMessageTemplate = document.querySelector('#success').content;
+  document.body.appendChild(successMessageTemplate.cloneNode(true));
+
+  const successButton = document.querySelector('.success__button');
+
+  document.addEventListener('keydown', escButtonKeydownOnSuccessMessageHandler);
+  document.addEventListener('click', successMessageClickHandler);
+  successButton.addEventListener('click', successButtonClickHandler);
+};
+
+const hideSuccessMessage = () => {
+  const successButton = document.querySelector('.success__button');
+  const successMessage = document.querySelector('.success');
+
+  document.body.removeChild(successMessage);
+
+  document.removeEventListener('keydown', escButtonKeydownOnSuccessMessageHandler);
+  document.removeEventListener('click', successMessageClickHandler);
+  successButton.removeEventListener('click', successButtonClickHandler);
 };
 
 const setScaleValue = (scaleValue) => {
@@ -182,6 +215,34 @@ const effectsChangeHandler = (evt) => {
   }
 };
 
+const formSuccessSubmitHandler = () => {
+  resetUploadForm();
+  clearPictureEffects();
+  setScaleValue(DEFAULT_SCALE_VALUE);
+  hideUploadForm();
+  showSuccessMessage();
+};
+
+const successButtonClickHandler = (evt) => {
+  evt.preventDefault();
+  hideSuccessMessage();
+};
+
+// в разметке successMessage - это область вне попапа с сообщением
+const successMessageClickHandler = (evt) => {
+  const successMessage = document.querySelector('.success');
+  evt.preventDefault();
+  if (evt.target === successMessage) {
+    hideSuccessMessage();
+  }
+};
+
+const escButtonKeydownOnSuccessMessageHandler = (evt) => {
+  if (isEscEvent(evt)) {
+    hideSuccessMessage();
+  }
+};
+
 uploadFileInput.addEventListener('change', downloadButtonClickHandler);
 
 textHashtagsInput.addEventListener('input', () => {
@@ -246,4 +307,4 @@ sliderElement.noUiSlider.on('update', (_values, handle, unencoded) => {
 
 setScaleValue(DEFAULT_SCALE_VALUE);
 
-export { setUploadFormSubmit, hideUploadForm };
+export { setUploadFormSubmit, formSuccessSubmitHandler };
