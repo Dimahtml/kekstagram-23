@@ -1,6 +1,7 @@
 /* eslint-disable no-use-before-define */
-import { isEscEvent, showErrorMessage  } from './utils.js';
+import { isEscEvent, showErrorMessage } from './utils.js';
 import { getReportHashtagsText } from './validation.js';
+import { sendData } from './api.js';
 
 const DEFAULT_EFFECT_VALUE = 100;
 const DEFAULT_SCALE_VALUE = 100;
@@ -30,25 +31,11 @@ const setUploadFormSubmit = (onSuccess) => {
   uploadForm.addEventListener('submit', (evt) => {
     evt.preventDefault();
 
-    const formData = new FormData(evt.target);
-
-    fetch(
-      'https://23.javascript.pages.academy/kekstagram123',
-      {
-        method: 'POST',
-        body: formData,
-      },
-    )
-      .then((response) => {
-        if (response.ok) {
-          onSuccess();
-        } else {
-          showErrorMessage('Не удалось отправить форму. Попробуйте еще раз');
-        }
-      })
-      .catch(() => {
-        showErrorMessage('Не удалось отправить форму. Попробуйте еще раз');
-      });
+    sendData(
+      () => onSuccess(),
+      () => showErrorMessage('Не удалось отправить форму. Попробуйте еще раз'),
+      new FormData(evt.target),
+    );
   });
 };
 
