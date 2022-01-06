@@ -1,4 +1,4 @@
-const URL_METHOD_GET = 'https://23.javascript.pages.academy/kekstagram/data';
+const URL_METHOD_GET = 'https://23.javascript.pages.academy/kekstagram/data11';
 const URL_METHOD_POST = 'https://23.javascript.pages.academy/kekstagram';
 
 const getData = (onSuccess, onFail) => {

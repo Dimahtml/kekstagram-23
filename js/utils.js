@@ -1,4 +1,4 @@
-const ALERT_SHOW_TIME = 5000;
+const ALERT_SHOW_TIME = 10000;
 
 // Функция взята из интернета и доработана
 // Источник - https://github.com/you-dont-need/You-Dont-Need-Lodash-Underscore#_random
@@ -37,7 +37,7 @@ const getRandomItem = (items) => {
 
 const isEscEvent = (evt) => evt.key === 'Escape' || evt.key === 'Esc';
 
-const showErrorMessage = (message) => {
+const showErrorMessageGetData = (message) => {
   const alertContainer = document.createElement('div');
   alertContainer.style.zIndex = 100;
   alertContainer.style.position = 'absolute';
@@ -64,5 +64,5 @@ export {
   checkStringLength,
   getRandomItem,
   isEscEvent,
-  showErrorMessage,
+  showErrorMessageGetData,
 };
