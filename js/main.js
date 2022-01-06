@@ -1,5 +1,6 @@
 import './pictures.js';
 import './form.js';
+import { setUploadFormSubmit, hideUploadForm } from './form.js';
 import { renderSimilarPictures } from './pictures.js';
 
 fetch('https://23.javascript.pages.academy/kekstagram/data')
@@ -7,3 +8,5 @@ fetch('https://23.javascript.pages.academy/kekstagram/data')
   .then((pictures) => {
     renderSimilarPictures(pictures);
   });
+
+setUploadFormSubmit(hideUploadForm);

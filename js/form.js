@@ -25,6 +25,22 @@ const sliderElement = uploadForm.querySelector('.effect-level__slider');
 let currentScaleValue = DEFAULT_SCALE_VALUE;
 let currentEffect = '';
 
+const setUploadFormSubmit = (onSuccess) => {
+  uploadForm.addEventListener('submit', (evt) => {
+    evt.preventDefault();
+
+    const formData = new FormData(evt.target);
+
+    fetch(
+      'https://23.javascript.pages.academy/kekstagram',
+      {
+        method: 'POST',
+        body: formData,
+      },
+    ).then(() => onSuccess());
+  });
+};
+
 const showUploadForm = () => {
   pictureUploadOverlay.classList.remove('hidden');
   sliderElement.classList.add('hidden');
@@ -229,3 +245,5 @@ sliderElement.noUiSlider.on('update', (_values, handle, unencoded) => {
 });
 
 setScaleValue(DEFAULT_SCALE_VALUE);
+
+export { setUploadFormSubmit, hideUploadForm };
