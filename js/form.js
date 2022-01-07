@@ -1,6 +1,7 @@
 /* eslint-disable no-use-before-define */
-import { isEscEvent  } from './utils.js';
+import { isEscEvent } from './utils.js';
 import { getReportHashtagsText } from './validation.js';
+import { sendData } from './api.js';
 
 const DEFAULT_EFFECT_VALUE = 100;
 const DEFAULT_SCALE_VALUE = 100;
@@ -21,9 +22,27 @@ const scaleInput = uploadForm.querySelector('.scale__control--value');
 const pictureEffectsContainer = uploadForm.querySelector('.effects__list');
 const valueElement = uploadForm.querySelector('.effect-level__value');
 const sliderElement = uploadForm.querySelector('.effect-level__slider');
+let successMessageTemplate = null;
+let errorMessageTemplate = null;
 
 let currentScaleValue = DEFAULT_SCALE_VALUE;
 let currentEffect = '';
+
+const setUploadFormSubmit = (onSuccess) => {
+  uploadForm.addEventListener('submit', (evt) => {
+    evt.preventDefault();
+
+    sendData(
+      () => onSuccess(),
+      () => showErrorMessageSubmitForm('Не удалось отправить форму. Попробуйте еще раз'),
+      new FormData(evt.target),
+    );
+  });
+};
+
+/**
+* Upload Form
+*/
 
 const showUploadForm = () => {
   pictureUploadOverlay.classList.remove('hidden');
@@ -52,6 +71,128 @@ const resetUploadForm = () => {
   currentScaleValue = DEFAULT_SCALE_VALUE;
 };
 
+const cancelButtonClickHandler = (evt) => {
+  evt.preventDefault(evt);
+  hideUploadForm();
+  resetUploadForm();
+  clearPictureEffects();
+  setScaleValue(DEFAULT_SCALE_VALUE);
+};
+
+const escButtonKeydownHandler = (evt) => {
+  if (isEscEvent(evt) && evt.target !== textHashtagsInput) {
+    evt.preventDefault();
+    hideUploadForm();
+    resetUploadForm();
+    clearPictureEffects();
+    setScaleValue(DEFAULT_SCALE_VALUE);
+  }
+};
+
+const downloadButtonClickHandler = () => {
+  showUploadForm();
+};
+
+/**
+* Success Message
+*/
+
+const showSuccessMessage = () => {
+  successMessageTemplate = document.querySelector('#success').content;
+  document.body.appendChild(successMessageTemplate.cloneNode(true));
+
+  const successButton = document.querySelector('.success__button');
+
+  document.addEventListener('keydown', escButtonKeydownOnSuccessMessageHandler);
+  document.addEventListener('click', successMessageClickHandler);
+  successButton.addEventListener('click', successButtonClickHandler);
+};
+
+const hideSuccessMessage = () => {
+  const successButton = document.querySelector('.success__button');
+  const successMessage = document.querySelector('.success');
+
+  document.body.removeChild(successMessage);
+
+  document.removeEventListener('keydown', escButtonKeydownOnSuccessMessageHandler);
+  document.removeEventListener('click', successMessageClickHandler);
+  successButton.removeEventListener('click', successButtonClickHandler);
+};
+
+const successButtonClickHandler = (evt) => {
+  evt.preventDefault();
+  hideSuccessMessage();
+};
+
+// в разметке successMessage - это область вне попапа с сообщением
+const successMessageClickHandler = (evt) => {
+  const successMessage = document.querySelector('.success');
+  evt.preventDefault();
+  if (evt.target === successMessage) {
+    hideSuccessMessage();
+  }
+};
+
+const escButtonKeydownOnSuccessMessageHandler = (evt) => {
+  if (isEscEvent(evt)) {
+    hideSuccessMessage();
+  }
+};
+
+/**
+* Error Message
+*/
+
+const showErrorMessageSubmitForm = () => {
+  hideUploadForm();
+  resetUploadForm();
+  clearPictureEffects();
+  setScaleValue(DEFAULT_SCALE_VALUE);
+
+  errorMessageTemplate = document.querySelector('#error').content;
+  document.body.appendChild(errorMessageTemplate.cloneNode(true));
+
+  const errorButton = document.querySelector('.error__button');
+
+  document.addEventListener('keydown', escButtonKeydownOnErrorMessageHandler);
+  document.addEventListener('click', errorMessageClickHandler);
+  errorButton.addEventListener('click', errorButtonClickHandler);
+};
+
+const hideErrorMessage = () => {
+  const errorButton = document.querySelector('.error__button');
+  const errorMessage = document.querySelector('.error');
+
+  document.body.removeChild(errorMessage);
+
+  document.removeEventListener('keydown', escButtonKeydownOnErrorMessageHandler);
+  document.removeEventListener('click', errorMessageClickHandler);
+  errorButton.removeEventListener('click', errorButtonClickHandler);
+};
+
+const errorButtonClickHandler = (evt) => {
+  evt.preventDefault();
+  hideErrorMessage();
+};
+
+const errorMessageClickHandler = (evt) => {
+  const errorMessage = document.querySelector('.error');
+  evt.preventDefault();
+  if (evt.target === errorMessage) {
+    hideErrorMessage();
+  }
+};
+
+const escButtonKeydownOnErrorMessageHandler = (evt) => {
+  if (isEscEvent(evt)) {
+    hideErrorMessage();
+  }
+};
+
+/**
+* Picture Effects
+*/
+
 const setScaleValue = (scaleValue) => {
   if (scaleValue < 100) {
     picturePreview.style.transform = `scale(0.${scaleValue})`;
@@ -79,27 +220,9 @@ const clearPictureEffects = () => {
   picturePreview.style.filter = 'none';
 };
 
-const cancelButtonClickHandler = (evt) => {
-  evt.preventDefault(evt);
-  hideUploadForm();
-  resetUploadForm();
-  clearPictureEffects();
-  setScaleValue(DEFAULT_SCALE_VALUE);
-};
-
-const escButtonKeydownHandler = (evt) => {
-  if (isEscEvent(evt) && evt.target !== textHashtagsInput) {
-    evt.preventDefault();
-    hideUploadForm();
-    resetUploadForm();
-    clearPictureEffects();
-    setScaleValue(DEFAULT_SCALE_VALUE);
-  }
-};
-
-const downloadButtonClickHandler = () => {
-  showUploadForm();
-};
+/**
+* Common
+*/
 
 const effectsChangeHandler = (evt) => {
   if (evt.target && evt.target.matches('input[type="radio"]')) {
@@ -166,6 +289,14 @@ const effectsChangeHandler = (evt) => {
   }
 };
 
+const formSuccessSubmitHandler = () => {
+  resetUploadForm();
+  clearPictureEffects();
+  setScaleValue(DEFAULT_SCALE_VALUE);
+  hideUploadForm();
+  showSuccessMessage();
+};
+
 uploadFileInput.addEventListener('change', downloadButtonClickHandler);
 
 textHashtagsInput.addEventListener('input', () => {
@@ -229,3 +360,5 @@ sliderElement.noUiSlider.on('update', (_values, handle, unencoded) => {
 });
 
 setScaleValue(DEFAULT_SCALE_VALUE);
+
+export { setUploadFormSubmit, formSuccessSubmitHandler };

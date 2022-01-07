@@ -15,16 +15,18 @@ const pictureClickHandler = (evt, url, likesCount, comments, description) => {
   bigPicture.classList.remove('hidden');
 };
 
-similarPictures.forEach(({url, likes, comments, description}) => {
-  const pictureElement = pictureTemplate.cloneNode(true);
-  pictureElement.querySelector('.picture__img').src = url;
-  pictureElement.querySelector('.picture__likes').textContent = likes;
-  pictureElement.querySelector('.picture__comments').textContent = comments.length;
-  similarPicturesFragment.appendChild(pictureElement);
+const renderSimilarPictures = (pictures) => {
+  pictures.forEach(({url, likes, comments, description}) => {
+    const pictureElement = pictureTemplate.cloneNode(true);
+    pictureElement.querySelector('.picture__img').src = url;
+    pictureElement.querySelector('.picture__likes').textContent = likes;
+    pictureElement.querySelector('.picture__comments').textContent = comments.length;
+    similarPicturesFragment.appendChild(pictureElement);
 
-  pictureElement.addEventListener('click', (evt) => pictureClickHandler(evt, url, likes, comments, description));
-});
+    pictureElement.addEventListener('click', (evt) => pictureClickHandler(evt, url, likes, comments, description));
+  });
 
-similarPicturesContainer.appendChild(similarPicturesFragment);
+  similarPicturesContainer.appendChild(similarPicturesFragment);
+};
 
-export { similarPictures };
+export { similarPictures, renderSimilarPictures };
