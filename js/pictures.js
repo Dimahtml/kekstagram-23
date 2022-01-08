@@ -16,6 +16,9 @@ const pictureClickHandler = (evt, url, likesCount, comments, description) => {
 };
 
 const renderSimilarPictures = (pictures) => {
+  const picturesElements = similarPicturesContainer.querySelectorAll('.picture');
+  picturesElements.forEach((element) => element.remove());
+
   pictures.forEach(({url, likes, comments, description}) => {
     const pictureElement = pictureTemplate.cloneNode(true);
     pictureElement.querySelector('.picture__img').src = url;
