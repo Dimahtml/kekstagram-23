@@ -4,14 +4,11 @@ const RANDOM_PICTURES_COUNT = 10;
 
 const filters = document.querySelector('.img-filters');
 const filterButtons = filters.querySelectorAll('.img-filters__button');
+const defaultButton = filters.querySelector('#filter-default');
+const randomButton = filters.querySelector('#filter-random');
+const discussedButton = filters.querySelector('#filter-discussed');
 
 filters.classList.remove('img-filters--inactive');
-
-const filterButtonClickHandler = (evt) => {
-  evt.preventDefault();
-  filterButtons.forEach((button) => button.classList.remove('img-filters__button--active'));
-  evt.target.classList.add('img-filters__button--active');
-};
 
 const sortPicturesByComments = (pictures) => {
   const copyPictures = pictures.slice();
@@ -41,6 +38,34 @@ const sortPicturesByRandom = (pictures) => {
   return randomPictures.flat();
 };
 
-filterButtons.forEach((button) => button.addEventListener('click', filterButtonClickHandler));
+const setDefaultButtonClick = (callback) => {
+  defaultButton.addEventListener('click', (evt) => {
+    callback();
+    filterButtons.forEach((button) => button.classList.remove('img-filters__button--active'));
+    evt.target.classList.add('img-filters__button--active');
+  });
+};
 
-export { sortPicturesByComments, sortPicturesByRandom };
+const setRandomButtonClick = (callback) => {
+  randomButton.addEventListener('click', (evt) => {
+    callback();
+    filterButtons.forEach((button) => button.classList.remove('img-filters__button--active'));
+    evt.target.classList.add('img-filters__button--active');
+  });
+};
+
+const setDiscussedButtonClick = (callback) => {
+  discussedButton.addEventListener('click', (evt) => {
+    callback();
+    filterButtons.forEach((button) => button.classList.remove('img-filters__button--active'));
+    evt.target.classList.add('img-filters__button--active');
+  });
+};
+
+export {
+  sortPicturesByComments,
+  sortPicturesByRandom,
+  setDiscussedButtonClick,
+  setDefaultButtonClick,
+  setRandomButtonClick
+};

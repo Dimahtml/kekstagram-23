@@ -4,10 +4,6 @@ import { createPictures } from './data.js';
 const pictureTemplate = document.querySelector('#picture').content.querySelector('.picture');
 const similarPicturesContainer = document.querySelector('.pictures');
 const bigPicture = document.querySelector('.big-picture');
-const filtersContainer = document.querySelector('.img-filters');
-const defaultButton = filtersContainer.querySelector('#filter-default');
-const randomButton = filtersContainer.querySelector('#filter-random');
-const discussedButton = filtersContainer.querySelector('#filter-discussed');
 
 const similarPictures = createPictures();
 
@@ -36,28 +32,4 @@ const renderSimilarPictures = (pictures) => {
   similarPicturesContainer.appendChild(similarPicturesFragment);
 };
 
-const setDefaultButtonClick = (cb) => {
-  defaultButton.addEventListener('click', () => {
-    cb();
-  });
-};
-
-const setRandomButtonClick = (cb) => {
-  randomButton.addEventListener('click', () => {
-    cb();
-  });
-};
-
-const setDiscussedButtonClick = (cb) => {
-  discussedButton.addEventListener('click', () => {
-    cb();
-  });
-};
-
-export {
-  similarPictures,
-  renderSimilarPictures,
-  setDiscussedButtonClick,
-  setDefaultButtonClick,
-  setRandomButtonClick
-};
+export { similarPictures, renderSimilarPictures };
