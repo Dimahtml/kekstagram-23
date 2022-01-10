@@ -1,5 +1,5 @@
 /* eslint-disable no-use-before-define */
-import { isEscEvent  } from './utils.js';
+import { isEscEvent  } from './utils/utils.js';
 import { renderSimilarComments, clearContainer } from './comments.js';
 
 const COMMENTS_PER_STEP = 5;

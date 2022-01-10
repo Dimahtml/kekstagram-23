@@ -1,5 +1,5 @@
 /* eslint-disable no-use-before-define */
-import { isEscEvent } from './utils.js';
+import { isEscEvent } from './utils/utils.js';
 import { getReportHashtagsText } from './validation.js';
 import { sendData } from './api.js';
 
@@ -48,9 +48,6 @@ const showUploadForm = () => {
   pictureUploadOverlay.classList.remove('hidden');
   sliderElement.classList.add('hidden');
   document.body.classList.add('modal-open');
-
-  const [file] = uploadFileInput.files;
-  picturePreview.src = URL.createObjectURL(file);
 
   cancelButton.addEventListener('click', cancelButtonClickHandler);
   document.addEventListener('keydown', escButtonKeydownHandler);

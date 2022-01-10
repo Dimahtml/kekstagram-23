@@ -1,4 +1,4 @@
-import { getRandomPositiveInteger, getRandomItem } from './utils.js';
+import { getRandomPositiveInteger, getRandomItem } from './utils/utils.js';
 
 const DESCRIPTION = 'Отличный кадр получился, правда?';
 const LIKES_MIN_COUNT = 15;
